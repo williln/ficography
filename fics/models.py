@@ -2,13 +2,46 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django_extensions.db.models import TimeStampedModel
 
+from taggit.managers import TaggableManager
+from taggit.models import TagBase, GenericTaggedItemBase
+
 
 class Author(TimeStampedModel):
     username = models.CharField(max_length=255)
     url = models.URLField()
 
     def __str__(self):
-        return f"{self.username}"
+        return self.username
+
+
+class Fandom(TimeStampedModel):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = _("Fandom")
+        verbose_name_plural = _("Fandoms")
+
+    def __str__(self):
+        return self.name
+
+
+# Custom tags
+
+
+class CustomTag(TagBase):
+    explicit = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = _("Tag")
+        verbose_name_plural = _("Tags")
+
+
+class TaggedFic(GenericTaggedItemBase):
+    tag = models.ForeignKey(
+        "fics.CustomTag",
+        on_delete=models.CASCADE,
+        related_name="tags",
+    )
 
 
 class Fic(TimeStampedModel):
@@ -26,6 +59,7 @@ class Fic(TimeStampedModel):
         max_length=100,
         help_text="ID of the work on the platform (AO3, FFN, etc.)",
     )
+    fandoms = models.ManyToManyField("fics.Fandom", related_name="fics")
     authors = models.ManyToManyField("fics.Author", related_name="fics")
     word_count = models.PositiveIntegerField(default=0)
     complete = models.BooleanField(default=False)
@@ -34,8 +68,10 @@ class Fic(TimeStampedModel):
     date_published = models.DateTimeField(null=True)
     date_updated = models.DateTimeField(null=True)
 
+    tags = TaggableManager(through=TaggedFic)
+
     def __str__(self):
-        return f"{self.title}"
+        return self.title
 
     class Meta:
         verbose_name = "Fic"
