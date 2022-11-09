@@ -1,12 +1,23 @@
-import pytest
-
+from faker import Faker
 from model_bakery import baker
 from test_plus.test import TestCase
 
-from ..models import Fic
+from ..models import Author, Fic
+
+fake = Faker()
 
 
-@pytest.mark.django_db()
+class AuthorModelTests(TestCase):
+    def setUp(self):
+        self.author = baker.make("fics.Author")
+
+    def test_object_creation(self):
+        Author.objects.create(username=fake.user_name(), url=fake.uri())
+
+    def test_str(self):
+        self.assertEquals(str(self.author), self.author.username)
+
+
 class FicModelTests(TestCase):
     def setUp(self):
         self.fic = baker.make("fics.Fic")
@@ -18,4 +29,4 @@ class FicModelTests(TestCase):
         )
 
     def test_fic_str(self):
-        assert str(self.fic) == f"{self.fic.title}"
+        self.assertEquals(str(self.fic), self.fic.title)

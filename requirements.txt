@@ -15,6 +15,7 @@ psycopg2
 black
 dirty-equals
 django-test-plus
+Faker
 ipython
 isort
 model-bakery
