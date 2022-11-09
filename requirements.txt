@@ -1,5 +1,6 @@
 Django<=4.1
 django-db-geventpool
+django-taggit
 django-extensions
 django-filter==22.1
 django-cors-headers
@@ -15,6 +16,7 @@ psycopg2
 black
 dirty-equals
 django-test-plus
+Faker
 ipython
 isort
 model-bakery
@@ -22,5 +24,4 @@ pytest
 pytest-cov
 pytest-django
 pytest-xdist
-responses
 whitenoise
