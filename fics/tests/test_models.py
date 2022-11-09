@@ -1,12 +1,21 @@
+import pytest
+
+from model_bakery import baker
+from test_plus.test import TestCase
+
 from ..models import Fic
 
 
-def test_work_creation(db):
-    Fic.objects.create(
-        url="www.example.com",
-        title="Example",
-    )
+@pytest.mark.django_db()
+class FicModelTests(TestCase):
+    def setUp(self):
+        self.fic = baker.make("fics.Fic")
 
+    def test_fic_creation(self):
+        Fic.objects.create(
+            url="www.example.com",
+            title="Example",
+        )
 
-def test_work_str(fic):
-    assert str(fic) == f"{fic.title}"
+    def test_fic_str(self):
+        assert str(self.fic) == f"{self.fic.title}"
