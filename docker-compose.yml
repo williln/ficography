@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+
+  db:
+    image: postgres:13.0
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=trust"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    env_file:
+      - .env
+    command: [ "/bin/bash", "/code/compose-start.sh" ]
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DJANGO_READ_DOT_ENV_FILE=false
+      - DJANGO_SETTINGS_MODULE=config.settings
+      - "ALLOWED_HOSTS=localhost,127.0.0.1"
+    stop_signal: SIGTERM
+
+volumes:
+  postgres_data:

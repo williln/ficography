@@ -1,0 +1,26 @@
+Django<=4.1
+django-db-geventpool
+django-extensions
+django-filter==22.1
+django-cors-headers
+dj-rest-auth
+django-taggit==3.0
+djangorestframework
+environs[django]
+gevent
+gunicorn
+psycopg2
+
+# Testing
+black
+dirty-equals
+django-test-plus
+ipython
+isort
+model-bakery
+pytest
+pytest-cov
+pytest-django
+pytest-xdist
+responses
+whitenoise
