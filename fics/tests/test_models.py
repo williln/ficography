@@ -2,7 +2,7 @@ from faker import Faker
 from model_bakery import baker
 from test_plus.test import TestCase
 
-from ..models import Author, CustomTag, Fandom, Fic
+from ..models import Author, Character, CustomTag, Fandom, Fic
 
 fake = Faker()
 
@@ -16,6 +16,17 @@ class AuthorModelTests(TestCase):
 
     def test_str(self):
         self.assertEquals(str(self.author), self.author.username)
+
+
+class CharacterModelTests(TestCase):
+    def setUp(self):
+        self.character = baker.make("fics.Character")
+
+    def test_object_creation(self):
+        Character.objects.create(name="Loid Forger")
+
+    def test_str(self):
+        self.assertEquals(str(self.character), self.character.name)
 
 
 class FandomModelTests(TestCase):

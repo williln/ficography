@@ -14,12 +14,45 @@ class Author(TimeStampedModel):
         return self.username
 
 
+class Character(TimeStampedModel):
+    """
+    The canon characters in the fic. Generally original characters will come through
+    with something generic like "Original Character"
+    """
+
+    name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
+
+
 class Fandom(TimeStampedModel):
+    """
+    A 'fandom' is the community around a specific thing.
+    With respect to fics, 'Hary Potter' and 'Star Wars' are both fandoms.
+    """
+
     name = models.CharField(max_length=255)
 
     class Meta:
         verbose_name = _("Fandom")
         verbose_name_plural = _("Fandoms")
+
+    def __str__(self):
+        return self.name
+
+
+class Ship(TimeStampedModel):
+    """
+    A 'ship' is a relationship. -
+    'Harry Potter/Ginny Weasley' is a ship. -
+    """
+
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = _("Ship")
+        verbose_name_plural = _("Ships")
 
     def __str__(self):
         return self.name
@@ -61,6 +94,8 @@ class Fic(TimeStampedModel):
     )
     fandoms = models.ManyToManyField("fics.Fandom", related_name="fics")
     authors = models.ManyToManyField("fics.Author", related_name="fics")
+    ships = models.ManyToManyField("fics.Ship", related_name="fics")
+    characters = models.ManyToManyField("fics.Character", related_name="fics")
     word_count = models.PositiveIntegerField(default=0)
     complete = models.BooleanField(default=False)
     rating = models.CharField(max_length=10, choices=Rating.choices, blank=True)
