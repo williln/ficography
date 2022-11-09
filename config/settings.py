@@ -61,7 +61,7 @@ INSTALLED_APPS = [
 INSTALLED_APPS += []
 
 # Our apps
-INSTALLED_APPS += []
+INSTALLED_APPS += ["fics"]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
