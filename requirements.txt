@@ -1,5 +1,6 @@
 Django<=4.1
 django-db-geventpool
+django-click
 django-taggit
 django-extensions
 django-filter==22.1
