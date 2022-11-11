@@ -16,6 +16,7 @@ from fics.management.commands.load_sample_fics import (
     create_characters,
     create_external_id,
     create_fandoms,
+    create_fic,
     create_ships,
     create_url,
     get_ships_from_fandom,
@@ -42,6 +43,10 @@ class LoadSampleFicsTestCase(TestCase):
         self.assertEquals(models.Fandom.objects.count(), count + 1)
         self.assertTrue(models.Fandom.objects.filter(name="Sample").exists())
 
+    def test_create_fic(self):
+        # FIXME
+        pass
+
     def test_create_ships(self):
         count = models.Ship.objects.count()
         result = create_ships(["Sample", "Another sample"])
@@ -56,8 +61,9 @@ class LoadSampleFicsTestCase(TestCase):
         result = create_url("hermione")
         self.assertEquals(result, "https://example.com/fics/hermione/")
 
-    # def test_get_ships_from_fandom(self):
-    #     expected = HARRY_POTTER_SHIPS
-    #     result = get_ships_from_fandom(HARRY_POTTER)
-    #     self.assertEquals(set(expected), set(result))
+    def test_get_ships_from_fandom(self):
+        expected = HARRY_POTTER_SHIPS
+        # result = get_ships_from_fandom(HARRY_POTTER)
+        # FIXME
+        # self.assertEquals(set(expected), set(result))
 
