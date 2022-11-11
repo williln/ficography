@@ -19,7 +19,7 @@ from fics.management.commands.load_sample_fics import (
     create_fic,
     create_ships,
     create_url,
-    get_ships_from_fandom,
+    # get_ships_from_fandom,
 )
 from fics import models
 
@@ -44,8 +44,27 @@ class LoadSampleFicsTestCase(TestCase):
         self.assertTrue(models.Fandom.objects.filter(name="Sample").exists())
 
     def test_create_fic(self):
-        # FIXME
-        pass
+        fandom = baker.make("fics.Fandom")
+        author = baker.make("fics.Author")
+        ship = baker.make("fics.Ship")
+        character_1 = baker.make("fics.Character")
+        character_2 = baker.make("fics.Character")
+        data = {
+            "title": "Sample",
+            "url": "https://example.com/fics/sample/",
+            "fandoms": [fandom],
+            "authors": [author],
+            "ships": [ship],
+            "characters": [character_1, character_2]
+        }
+        result = create_fic(data)
+        self.assertTrue(result)
+        self.assertIsNotNone(result.pk)
+        self.assertEquals(result.title, data["title"])
+        self.assertIn(fandom, result.fandoms.all())
+        self.assertIn(author, result.authors.all())
+        self.assertIn(character_1, result.characters.all())
+        self.assertIn(character_2, result.characters.all())
 
     def test_create_ships(self):
         count = models.Ship.objects.count()
@@ -61,9 +80,10 @@ class LoadSampleFicsTestCase(TestCase):
         result = create_url("hermione")
         self.assertEquals(result, "https://example.com/fics/hermione/")
 
-    def test_get_ships_from_fandom(self):
-        expected = HARRY_POTTER_SHIPS
-        # result = get_ships_from_fandom(HARRY_POTTER)
-        # FIXME
-        # self.assertEquals(set(expected), set(result))
-
+    # def test_get_ships_from_fandom(self):
+    #     # Set up ships
+    #     for ship in SHIPS:
+    #         models.Ship.objects.get_or_create(name=ship)
+    #     expected = models.Ship.objects.filter(name__in=HARRY_POTTER_SHIPS)
+    #     result = get_ships_from_fandom(HARRY_POTTER, models.Ship.objects.all())
+    #     self.assertEquals(expected, result)

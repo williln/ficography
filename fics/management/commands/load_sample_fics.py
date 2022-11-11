@@ -98,13 +98,57 @@ def create_url(external_id: str) -> str:
     return f"https://example.com/fics/{external_id}/"
 
 
-def get_ships_from_fandom(fandom: str, ships) -> list:
-    """Takes a fandom str, returns the queryset of ships for that fandom"""
-    ships = SHIPS.get(fandom)
-    # breakpoint()
-    if not ships:
-        raise Exception(f"No ships found for {fandom}")
-    return ships.filter(name__in=ships)
+def create_fic(data: dict) -> Fic:
+    """
+    Takes a data dictionary. Returns a Fic object.
+
+    Expects this format for `data`:
+    {
+        "title": str,
+        "fandoms": [Fandom],
+        "authors": [Author],
+        "ships": [Ship],
+        "characters": [Character],
+    }
+    """
+    external_id = create_external_id()
+    url = create_url(external_id)
+    date_published = fake.date_time_this_century()
+    date_updated = date_published + timedelta(days=random.randint(1, 30))
+    fic, created = Fic.objects.get_or_create(
+        title=data.get("title"),
+        defaults={
+            "url": data.get("url"),
+            "external_id": external_id,
+            "url": url,
+            "complete": random.choice([True, False]),
+            "rating": random.choice(Fic.Rating.choices[0]),
+            "summary": fake.paragraph(),
+            "date_published": date_published,
+            "date_updated": date_updated,
+        },
+    )
+    for fandom in data.get("fandoms"):
+        fic.fandoms.add(fandom)
+
+    for author in data.get("authors"):
+        fic.authors.add(author)
+
+    for ship in data.get("ships"):
+        fic.ships.add(ship)
+
+    for character in data.get("characters"):
+        fic.characters.add(character)
+
+    return fic
+
+# def get_ships_from_fandom(fandom: str, ships) -> list:
+#     """Takes a fandom str, returns the queryset of ships for that fandom"""
+#     ships = SHIPS.get(fandom)
+#     # breakpoint()
+#     if not ships:
+#         raise Exception(f"No ships found for {fandom}")
+#     return ships.filter(name__in=ships)
 
 
 
@@ -167,53 +211,3 @@ def command():
             pass
         fic_characters = characters.objects.filter(name__in=HARRY_POTTER_CHARACTERS)
         fic_ships = ships.objects.filter(name__in=HARRY_POTTER_SHIPS)
-
-
-
-
-
-
-
-def create_fic(data: dict) -> Fic:
-    """
-    Takes a data dictionary. Returns a Fic object.
-
-    Expects this format for `data`:
-    {
-        "title": str,
-        "fandoms": [Fandom],
-        "authors": [Author],
-        "ships": [Ship],
-        "characters": [Character],
-    }
-    """
-    external_id = create_external_id()
-    url = create_url(external_id)
-    date_published = fake.date_time_this_century()
-    date_updated = date_published + timedelta(days=random.randint(1, 30))
-    fic, created = Fic.objects.get_or_create(
-        title=data.get("title"),
-        defaults={
-            "url": data.get("url"),
-            "external_id": external_id,
-            "url": url,
-            "complete": random.choice([True, False]),
-            "rating": random.choice(Fic.Rating.choices[0]),
-            "summary": fake.paragraph(),
-            "date_published": date_published,
-            "date_updated": date_updated,
-        },
-    )
-    for fandom in data.get("fandoms"):
-        fic.fandoms.add(fandom)
-
-    for author in data.get("authors"):
-        fic.authors.add(author)
-
-    for ship in data.get("ships"):
-        fic.ships.add(ship)
-
-    for character in data.get("characters"):
-        fic.characters.add(character)
-
-    return fic
