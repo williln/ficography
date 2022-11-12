@@ -21,7 +21,7 @@ Will generate a set of sample Fandom, Author, Character, Tag, and Ship objects, 
 
 _Does not necessarily add every Character in a Ship; it's expected that you do your own massaging of the data via the CLI or (coming soon) the Django admin if you need perfect sample data. 
 
-    ./manage.py load_sample+fics
+    ./manage.py load_sample_fics
 
 # Just Commands
 
