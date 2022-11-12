@@ -13,6 +13,16 @@ Copy `env.template` to a local `.env` file
 
     cp env.template .env 
 
+# Management Commands 
+
+## load_sample_fics 
+
+Will generate a set of sample Fandom, Author, Character, Tag, and Ship objects, then use those objects to generate 100 Fic objects. 
+
+_Does not necessarily add every Character in a Ship; it's expected that you do your own massaging of the data via the CLI or (coming soon) the Django admin if you need perfect sample data. 
+
+    ./manage.py load_sample+fics
+
 # Just Commands
 
 I use [just](https://github.com/casey/just) to help standardize working with
