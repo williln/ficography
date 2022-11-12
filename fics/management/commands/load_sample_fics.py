@@ -1,22 +1,21 @@
-from datetime import timedelta
 import random
 import string
+from datetime import timedelta
+
 import djclick as click
 from faker import Faker
-from model_bakery import baker
 
-from fics.models import Author, Character, CustomTag, Fandom, Ship, Fic
+from fics.models import Author, Character, CustomTag, Fandom, Fic, Ship
 
 from .constants import (
-    HARRY_POTTER,
-    STAR_WARS,
-    SPY_FAMILY,
-    GILMORE_GIRLS,
-    FANDOMS,
     CHARACTERS,
+    FANDOMS,
+    GILMORE_GIRLS,
+    HARRY_POTTER,
     SHIPS,
+    SPY_FAMILY,
+    STAR_WARS,
 )
-
 
 fake = Faker()
 
@@ -118,7 +117,6 @@ def create_fic(data: dict) -> Fic:
     fic, created = Fic.objects.get_or_create(
         title=data.get("title"),
         defaults={
-            "url": data.get("url"),
             "external_id": external_id,
             "url": url,
             "complete": random.choice([True, False]),
@@ -128,33 +126,38 @@ def create_fic(data: dict) -> Fic:
             "date_updated": date_updated,
         },
     )
+    click.secho(f"---Created fic: {data['title']}", fg="green")
     for fandom in data.get("fandoms"):
         fic.fandoms.add(fandom)
+        click.secho(f"--- --- Added fandom: {fandom}", fg="green")
 
     for author in data.get("authors"):
         fic.authors.add(author)
+        click.secho(f"--- --- Added author: {author}", fg="green")
 
     for ship in data.get("ships"):
         fic.ships.add(ship)
+        click.secho(f"--- --- Added ship: {ship}", fg="green")
 
     for character in data.get("characters"):
         fic.characters.add(character)
+        click.secho(f"--- --- Added character: {character}", fg="green")
 
     return fic
 
-# def get_ships_from_fandom(fandom: str, ships) -> list:
-#     """Takes a fandom str, returns the queryset of ships for that fandom"""
-#     ships = SHIPS.get(fandom)
-#     # breakpoint()
-#     if not ships:
-#         raise Exception(f"No ships found for {fandom}")
-#     return ships.filter(name__in=ships)
 
+def clear():
+    Author.objects.all().delete()
+    Character.objects.all().delete()
+    Fandom.objects.all().delete()
+    Ship.objects.all().delete()
+    Fic.objects.all().delete()
 
 
 @click.command()
 def command():
-    click.secho("Hello", fg="red")
+    click.secho("Deleting old stuff...", fg="red")
+    clear()
 
     # Create tags
     click.secho("Creating tags...", fg="green")
@@ -168,8 +171,8 @@ def command():
     tags = CustomTag.objects.all()
 
     # Create authors
-    # click.secho("Creating authors...", fg="green")
-    # authors = create_authors(30)
+    click.secho("Creating authors...", fg="green")
+    authors = create_authors(50)
 
     # Create fandoms
     click.secho("Creating fandoms...", fg="green")
@@ -177,18 +180,21 @@ def command():
 
     # Create ships
     click.secho("Creating ships...", fg="green")
-    ships = create_ships(SHIPS)
+    ships = create_ships(
+        SHIPS[HARRY_POTTER]
+        + SHIPS[STAR_WARS]
+        + SHIPS[SPY_FAMILY]
+        + SHIPS[GILMORE_GIRLS]
+    )
 
     # Create characters
     click.secho("Creating characters...", fg="green")
-    characters = create_characters(CHARACTERS)
-
-
-
-    click.secho("Creating fics...", fg="green")
-
-    click.secho("Creating Harry Potter fics...", fg="green")
-    fandom = fandoms.filter(name__icontains="Harry").first()
+    characters = create_characters(
+        CHARACTERS[HARRY_POTTER]
+        + CHARACTERS[STAR_WARS]
+        + CHARACTERS[SPY_FAMILY]
+        + CHARACTERS[GILMORE_GIRLS]
+    )
 
     # Get titles
     click.secho("Retrieving titles...", fg="green")
@@ -196,18 +202,112 @@ def command():
         lines = f.readlines()
         titles = [title for title in lines if title]
 
-    for i, title in enumerate(titles):
-        # Make Harry Potter fics
-        if i < 25:
-            pass
-        # Make Star Wars fics
-        elif i < 50:
-            pass
-        # Make Spy x Family fics
-        elif i < 75:
-            pass
-        # Make Gilmore Girls fics
-        else:
-            pass
-        fic_characters = characters.objects.filter(name__in=HARRY_POTTER_CHARACTERS)
-        fic_ships = ships.objects.filter(name__in=HARRY_POTTER_SHIPS)
+    click.secho("Creating fics...", fg="green")
+
+    click.secho("Creating Harry Potter fics...", fg="green")
+    fandom = fandoms.filter(name__icontains="Harry").first()
+    fandom_characters = characters.filter(name__in=CHARACTERS[HARRY_POTTER])
+    fandom_ships = ships.filter(name__in=SHIPS[HARRY_POTTER])
+
+    title_i = 0
+
+    for i in range(25):
+        # Get title
+        title = titles[title_i]
+        title_i += 1
+
+        # Get a random amount of authors, characters, ships, and tags
+        author = authors.order_by("?").first()
+        fic_characters = fandom_characters[: random.randint(0, len(fandom_characters))]
+        fic_ships = fandom_ships[: random.randint(0, len(fandom_ships))]
+        fic_tags = tags[: random.randint(0, len(tags))]
+
+        data = {
+            "title": title,
+            "fandoms": [fandom],
+            "authors": [author],
+            "characters": fic_characters,
+            "tags": fic_tags,
+            "ships": fic_ships,
+        }
+        fic = create_fic(data)
+
+    click.secho("Creating Star Wars fics...", fg="green")
+    fandom = fandoms.filter(name__icontains="Star").first()
+    fandom_characters = characters.filter(name__in=CHARACTERS[STAR_WARS])
+    fandom_ships = ships.filter(name__in=SHIPS[STAR_WARS])
+
+    for i in range(25):
+        # Get title
+        title = titles[title_i]
+        title_i += 1
+
+        # Get a random amount of authors, characters, ships, and tags
+        author = authors.order_by("?").first()
+        fic_characters = fandom_characters[: random.randint(0, len(fandom_characters))]
+        fic_ships = fandom_ships[: random.randint(0, len(fandom_ships))]
+        fic_tags = tags[: random.randint(0, len(tags))]
+
+        data = {
+            "title": title,
+            "fandoms": [fandom],
+            "authors": [author],
+            "characters": fic_characters,
+            "tags": fic_tags,
+            "ships": fic_ships,
+        }
+        fic = create_fic(data)
+
+    click.secho("Creating Spy x Family fics...", fg="green")
+    fandom = fandoms.filter(name__icontains="Spy").first()
+    fandom_characters = characters.filter(name__in=CHARACTERS[SPY_FAMILY])
+    fandom_ships = ships.filter(name__in=SHIPS[SPY_FAMILY])
+
+    for i in range(25):
+        # Get title
+        title = titles[title_i]
+        title_i += 1
+
+        # Get a random amount of authors, characters, ships, and tags
+        author = authors.order_by("?").first()
+        fic_characters = fandom_characters[: random.randint(0, len(fandom_characters))]
+        fic_ships = fandom_ships[: random.randint(0, len(fandom_ships))]
+        fic_tags = tags[: random.randint(0, len(tags))]
+
+        data = {
+            "title": title,
+            "fandoms": [fandom],
+            "authors": [author],
+            "characters": fic_characters,
+            "tags": fic_tags,
+            "ships": fic_ships,
+        }
+        fic = create_fic(data)
+
+    click.secho("Creating Gilmore Girls fics...", fg="green")
+    fandom = fandoms.filter(name__icontains="Gilmore").first()
+    fandom_characters = characters.filter(name__in=CHARACTERS[GILMORE_GIRLS])
+    fandom_ships = ships.filter(name__in=SHIPS[GILMORE_GIRLS])
+
+    for i in range(25):
+        # Get title
+        title = titles[title_i]
+        title_i += 1
+
+        # Get a random amount of authors, characters, ships, and tags
+        author = authors.order_by("?").first()
+        fic_characters = fandom_characters[: random.randint(0, len(fandom_characters))]
+        fic_ships = fandom_ships[: random.randint(0, len(fandom_ships))]
+        fic_tags = tags[: random.randint(0, len(tags))]
+
+        data = {
+            "title": title,
+            "fandoms": [fandom],
+            "authors": [author],
+            "characters": fic_characters,
+            "tags": fic_tags,
+            "ships": fic_ships,
+        }
+        create_fic(data)
+
+    click.secho("All done!!!")

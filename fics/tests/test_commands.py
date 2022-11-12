@@ -1,17 +1,18 @@
 from model_bakery import baker
 from test_plus.test import TestCase
 
+from fics import models
 from fics.management.commands.constants import (
-    HARRY_POTTER_SHIPS,
-    HARRY_POTTER,
-    STAR_WARS,
-    SPY_FAMILY,
-    GILMORE_GIRLS,
-    FANDOMS,
     CHARACTERS,
+    FANDOMS,
+    GILMORE_GIRLS,
+    HARRY_POTTER,
+    HARRY_POTTER_SHIPS,
     SHIPS,
+    SPY_FAMILY,
+    STAR_WARS,
 )
-from fics.management.commands.load_sample_fics import (
+from fics.management.commands.load_sample_fics import (  # get_ships_from_fandom,
     create_authors,
     create_characters,
     create_external_id,
@@ -19,9 +20,7 @@ from fics.management.commands.load_sample_fics import (
     create_fic,
     create_ships,
     create_url,
-    # get_ships_from_fandom,
 )
-from fics import models
 
 
 class LoadSampleFicsTestCase(TestCase):
@@ -55,7 +54,7 @@ class LoadSampleFicsTestCase(TestCase):
             "fandoms": [fandom],
             "authors": [author],
             "ships": [ship],
-            "characters": [character_1, character_2]
+            "characters": [character_1, character_2],
         }
         result = create_fic(data)
         self.assertTrue(result)
