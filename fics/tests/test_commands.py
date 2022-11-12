@@ -78,11 +78,3 @@ class LoadSampleFicsTestCase(TestCase):
     def test_create_url(self):
         result = create_url("hermione")
         self.assertEquals(result, "https://example.com/fics/hermione/")
-
-    # def test_get_ships_from_fandom(self):
-    #     # Set up ships
-    #     for ship in SHIPS:
-    #         models.Ship.objects.get_or_create(name=ship)
-    #     expected = models.Ship.objects.filter(name__in=HARRY_POTTER_SHIPS)
-    #     result = get_ships_from_fandom(HARRY_POTTER, models.Ship.objects.all())
-    #     self.assertEquals(expected, result)
