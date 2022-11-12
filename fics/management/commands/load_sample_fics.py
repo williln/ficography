@@ -143,14 +143,16 @@ def create_fic(data: dict) -> Fic:
         fic.characters.add(character)
         click.secho(f"--- --- Added character: {character}", fg="green")
 
+    for tag in data.get("tags"):
+        fic.tags.add(tag)
+        click.secho(f"--- --- Added tag: {tag}", fg="green")
+
     return fic
 
 
 def clear():
+    """ Only delete the objects that aren't static """
     Author.objects.all().delete()
-    Character.objects.all().delete()
-    Fandom.objects.all().delete()
-    Ship.objects.all().delete()
     Fic.objects.all().delete()
 
 
