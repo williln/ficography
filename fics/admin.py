@@ -20,8 +20,23 @@ class FandomAdmin(admin.ModelAdmin):
 
 
 class ShipAdmin(admin.ModelAdmin):
-    list_display = ("name",)
+    list_display = ("name", "show_characters", "show_fandoms")
+    list_filter = ("characters__fandom",)
     search_fields = ("name",)
+
+    def show_characters(self, obj):
+        if obj.characters.exists():
+            return ", ".join([character.name for character in obj.characters.all()])
+        return ""
+
+    def show_fandoms(self, obj):
+        if obj.characters.exists():
+            fandoms = [
+                character.fandom
+                for character in obj.characters.all().distinct("fandom")
+            ]
+            return ", ".join([fandom.name for fandom in fandoms])
+        return ""
 
 
 class TagAdmin(admin.ModelAdmin):
