@@ -73,7 +73,8 @@ def create_fandoms(fandoms: list):
 
 def create_ships(ships: list):
     """
-    Generate the Ship objects based on the list of strings in fandoms.
+    Generate the Ship objects based on the list of strings in fandoms,
+    and connects the characters for the ship to the Ship object
 
     Returns queryset of the Ships that were created.
     """
@@ -83,6 +84,16 @@ def create_ships(ships: list):
         if created:
             click.secho(f"---Created ship: {ship}")
         ids.append(obj.id)
+
+        # Add characters
+        characters = ship.split("/")
+        try:
+            character_a = Character.objects.get(name__icontains=characters[0])
+            character_b = Character.objects.get(name__icontains=characters[1])
+            obj.characters.add(character_a)
+            obj.characters.add(character_b)
+        except Character.DoesNotExist:
+            continue
 
     return Ship.objects.filter(id__in=ids)
 
@@ -185,15 +196,6 @@ def command():
     click.secho("Creating fandoms...", fg="green")
     create_fandoms(FANDOMS)
 
-    # Create ships
-    click.secho("Creating ships...", fg="green")
-    ships = create_ships(
-        SHIPS[HARRY_POTTER]
-        + SHIPS[STAR_WARS]
-        + SHIPS[SPY_FAMILY]
-        + SHIPS[GILMORE_GIRLS]
-    )
-
     hp_fandom = Fandom.objects.get(name__icontains="Harry")
     sw_fandom = Fandom.objects.get(name__icontains="Star")
     spy_fandom = Fandom.objects.get(name__icontains="Spy")
@@ -211,6 +213,15 @@ def command():
 
     click.secho("Creating Gilmore Girls characters...", fg="green")
     gg_characters = create_characters(CHARACTERS[GILMORE_GIRLS], gg_fandom)
+
+    # Create ships
+    click.secho("Creating ships...", fg="green")
+    ships = create_ships(
+        SHIPS[HARRY_POTTER]
+        + SHIPS[STAR_WARS]
+        + SHIPS[SPY_FAMILY]
+        + SHIPS[GILMORE_GIRLS]
+    )
 
     # Get titles
     click.secho("Retrieving titles...", fg="green")
