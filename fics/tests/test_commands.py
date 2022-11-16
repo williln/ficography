@@ -2,16 +2,6 @@ from model_bakery import baker
 from test_plus.test import TestCase
 
 from fics import models
-from fics.management.commands.constants import (
-    CHARACTERS,
-    FANDOMS,
-    GILMORE_GIRLS,
-    HARRY_POTTER,
-    HARRY_POTTER_SHIPS,
-    SHIPS,
-    SPY_FAMILY,
-    STAR_WARS,
-)
 from fics.management.commands.load_sample_fics import (  # get_ships_from_fandom,
     create_authors,
     create_characters,
@@ -26,19 +16,22 @@ from fics.management.commands.load_sample_fics import (  # get_ships_from_fandom
 class LoadSampleFicsTestCase(TestCase):
     def test_create_authors(self):
         count = models.Author.objects.count()
-        result = create_authors(1)
+        create_authors(1)
         self.assertEquals(models.Author.objects.count(), count + 1)
 
     def test_create_characters(self):
+        fandom = baker.make("fics.Fandom")
         count = models.Character.objects.count()
-        result = create_characters(["Harry", "Hermione"])
+        create_characters(["Harry", "Hermione"], fandom)
         self.assertEquals(models.Character.objects.count(), count + 2)
         self.assertTrue(models.Character.objects.filter(name="Harry").exists())
         self.assertTrue(models.Character.objects.filter(name="Hermione").exists())
+        obj = models.Character.objects.filter(name="Harry").first()
+        self.assertEqual(fandom, obj.fandom)
 
     def test_create_fandoms(self):
         count = models.Fandom.objects.count()
-        result = create_fandoms(["Sample"])
+        create_fandoms(["Sample"])
         self.assertEquals(models.Fandom.objects.count(), count + 1)
         self.assertTrue(models.Fandom.objects.filter(name="Sample").exists())
 
@@ -67,7 +60,7 @@ class LoadSampleFicsTestCase(TestCase):
 
     def test_create_ships(self):
         count = models.Ship.objects.count()
-        result = create_ships(["Sample", "Another sample"])
+        create_ships(["Sample", "Another sample"])
         self.assertEquals(models.Ship.objects.count(), count + 2)
         self.assertTrue(models.Ship.objects.filter(name="Sample").exists())
 
