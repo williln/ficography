@@ -28,28 +28,29 @@ def create_authors(count: int):
     """
     ids = []
     for i in range(count):
-        obj, created = Author.objects.get_or_create(
-            username=fake.user_name(), url=fake.uri()
-        )
+        username = fake.user_name()
+        url = create_url(username)
+        obj, created = Author.objects.get_or_create(username=username, url=url)
         if created:
             click.secho(f"---Created author: {obj.username}")
-            ids.append(obj.id)
+        ids.append(obj.id)
 
     return Author.objects.filter(id__in=ids)
 
 
-def create_characters(characters: list):
+def create_characters(characters: list, fandom: Fandom):
     """
-    Generate the Character objects based on the list of strings in characters
+    Generate the Character objects based on the list of strings in characters,
+    and adds the fandom
 
     Returns a queryset of the Characters that were created.
     """
     ids = []
     for character in characters:
-        obj, created = Character.objects.get_or_create(name=character)
+        obj, created = Character.objects.update_or_create(name=character, fandom=fandom)
         if created:
             print(f"---Created character: {character}")
-            ids.append(obj.id)
+        ids.append(obj.id)
 
     return Character.objects.filter(id__in=ids)
 
@@ -65,7 +66,7 @@ def create_fandoms(fandoms: list):
         obj, created = Fandom.objects.get_or_create(name=fandom)
         if created:
             click.secho(f"---Created fandom: {fandom}")
-            ids.append(obj.id)
+        ids.append(obj.id)
 
     return Fandom.objects.filter(id__in=ids)
 
@@ -81,7 +82,7 @@ def create_ships(ships: list):
         obj, created = Ship.objects.get_or_create(name=ship)
         if created:
             click.secho(f"---Created ship: {ship}")
-            ids.append(obj.id)
+        ids.append(obj.id)
 
     return Ship.objects.filter(id__in=ids)
 
@@ -154,6 +155,9 @@ def create_fic(data: dict) -> Fic:
 def clear():
     """Only delete the objects that aren't static"""
     Author.objects.all().delete()
+    Character.objects.all().delete()
+    Fandom.objects.all().delete()
+    Ship.objects.all().delete()
     Fic.objects.all().delete()
 
 
@@ -179,7 +183,7 @@ def command():
 
     # Create fandoms
     click.secho("Creating fandoms...", fg="green")
-    fandoms = create_fandoms(FANDOMS)
+    create_fandoms(FANDOMS)
 
     # Create ships
     click.secho("Creating ships...", fg="green")
@@ -190,14 +194,23 @@ def command():
         + SHIPS[GILMORE_GIRLS]
     )
 
+    hp_fandom = Fandom.objects.get(name__icontains="Harry")
+    sw_fandom = Fandom.objects.get(name__icontains="Star")
+    spy_fandom = Fandom.objects.get(name__icontains="Spy")
+    gg_fandom = Fandom.objects.get(name__icontains="Gilmore")
+
     # Create characters
-    click.secho("Creating characters...", fg="green")
-    characters = create_characters(
-        CHARACTERS[HARRY_POTTER]
-        + CHARACTERS[STAR_WARS]
-        + CHARACTERS[SPY_FAMILY]
-        + CHARACTERS[GILMORE_GIRLS]
-    )
+    click.secho("Creating Harry Potter characters...", fg="green")
+    hp_characters = create_characters(CHARACTERS[HARRY_POTTER], hp_fandom)
+
+    click.secho("Creating Star Wars characters...", fg="green")
+    sw_characters = create_characters(CHARACTERS[STAR_WARS], sw_fandom)
+
+    click.secho("Creating Spy x Family characters...", fg="green")
+    sf_characters = create_characters(CHARACTERS[SPY_FAMILY], spy_fandom)
+
+    click.secho("Creating Gilmore Girls characters...", fg="green")
+    gg_characters = create_characters(CHARACTERS[GILMORE_GIRLS], gg_fandom)
 
     # Get titles
     click.secho("Retrieving titles...", fg="green")
@@ -208,8 +221,8 @@ def command():
     click.secho("Creating fics...", fg="green")
 
     click.secho("Creating Harry Potter fics...", fg="green")
-    fandom = fandoms.filter(name__icontains="Harry").first()
-    fandom_characters = characters.filter(name__in=CHARACTERS[HARRY_POTTER])
+    fandom = hp_fandom
+    fandom_characters = hp_characters
     fandom_ships = ships.filter(name__in=SHIPS[HARRY_POTTER])
 
     title_i = 0
@@ -236,8 +249,8 @@ def command():
         create_fic(data)
 
     click.secho("Creating Star Wars fics...", fg="green")
-    fandom = fandoms.filter(name__icontains="Star").first()
-    fandom_characters = characters.filter(name__in=CHARACTERS[STAR_WARS])
+    fandom = sw_fandom
+    fandom_characters = sw_characters
     fandom_ships = ships.filter(name__in=SHIPS[STAR_WARS])
 
     for i in range(25):
@@ -262,8 +275,8 @@ def command():
         create_fic(data)
 
     click.secho("Creating Spy x Family fics...", fg="green")
-    fandom = fandoms.filter(name__icontains="Spy").first()
-    fandom_characters = characters.filter(name__in=CHARACTERS[SPY_FAMILY])
+    fandom = spy_fandom
+    fandom_characters = sf_characters
     fandom_ships = ships.filter(name__in=SHIPS[SPY_FAMILY])
 
     for i in range(25):
@@ -288,8 +301,8 @@ def command():
         create_fic(data)
 
     click.secho("Creating Gilmore Girls fics...", fg="green")
-    fandom = fandoms.filter(name__icontains="Gilmore").first()
-    fandom_characters = characters.filter(name__in=CHARACTERS[GILMORE_GIRLS])
+    fandom = gg_fandom
+    fandom_characters = gg_characters
     fandom_ships = ships.filter(name__in=SHIPS[GILMORE_GIRLS])
 
     for i in range(25):

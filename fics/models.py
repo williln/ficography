@@ -20,6 +20,9 @@ class Character(TimeStampedModel):
     """
 
     name = models.CharField(max_length=255)
+    fandom = models.ForeignKey(
+        "fics.Fandom", related_name="characters", on_delete=models.SET_NULL, null=True
+    )
 
     def __str__(self):
         return self.name
