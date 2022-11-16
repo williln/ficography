@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from fics.models import Author, Character, Fandom
+from fics.models import Author, Character, CustomTag, Fandom
 
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -19,6 +19,12 @@ class FandomAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+class TagAdmin(admin.ModelAdmin):
+    list_display = ("name",)
+    search_fields = ("name",)
+
+
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Character, CharacterAdmin)
 admin.site.register(Fandom, FandomAdmin)
+admin.site.register(CustomTag, TagAdmin)
