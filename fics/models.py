@@ -51,6 +51,7 @@ class Ship(TimeStampedModel):
     """
 
     name = models.CharField(max_length=255)
+    characters = models.ManyToManyField("fics.Character", related_name="ships")
 
     class Meta:
         verbose_name = _("Ship")
