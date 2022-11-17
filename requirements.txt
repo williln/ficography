@@ -4,6 +4,7 @@ django-click
 django-taggit
 django-extensions
 django-filter==22.1
+django-htmx==1.13.0
 django-cors-headers
 dj-rest-auth
 django-taggit==3.0
