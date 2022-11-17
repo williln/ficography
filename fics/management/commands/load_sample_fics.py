@@ -126,7 +126,7 @@ def create_fic(data: dict) -> Fic:
     url = create_url(external_id)
     date_published = fake.date_time_this_century()
     date_updated = date_published + timedelta(days=random.randint(1, 30))
-    fic, created = Fic.objects.get_or_create(
+    fic, created = Fic.objects.update_or_create(
         title=data.get("title"),
         defaults={
             "external_id": external_id,
@@ -136,6 +136,8 @@ def create_fic(data: dict) -> Fic:
             "summary": fake.paragraph(),
             "date_published": date_published,
             "date_updated": date_updated,
+            "word_count": random.randint(500, 200000),
+            "complete": fake.boolean()
         },
     )
     click.secho(f"---Created fic: {data['title']}", fg="green")
