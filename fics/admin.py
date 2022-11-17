@@ -21,7 +21,7 @@ class FandomAdmin(admin.ModelAdmin):
 
 class FicAdmin(admin.ModelAdmin):
     list_display = ("title", "show_fandoms", "show_ships", "show_authors", "word_count", "complete")
-    list_filter = ("fandoms", "ships")
+    list_filter = ("fandoms", "ships", "complete")
     search_fields = ("title", "summary", "fandoms__name", "ships__name")
 
     def show_fandoms(self, obj):
