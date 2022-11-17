@@ -58,7 +58,7 @@ INSTALLED_APPS = [
 ]
 
 # Third-party apps
-INSTALLED_APPS += []
+INSTALLED_APPS += ["django_htmx", "compressor"]
 
 # Our apps
 INSTALLED_APPS += ["fics"]
@@ -71,6 +71,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "django_htmx.middleware.HtmxMiddleware",
 ]
 
 if DEBUG:
@@ -174,3 +175,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # django-taggit settings
 TAGGIT_CASE_INSENSITIVE = True
+
+# Compressor settings
+COMPRESS_ROOT = BASE_DIR / 'static'
+COMPRESS_ENABLED = True
+STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
