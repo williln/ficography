@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from fics.models import Author, Character, CustomTag, Fandom, Ship
+from fics.models import Author, Character, CustomTag, Fandom, Fic, Ship
 
 
 class AuthorAdmin(admin.ModelAdmin):
@@ -17,6 +17,34 @@ class CharacterAdmin(admin.ModelAdmin):
 class FandomAdmin(admin.ModelAdmin):
     list_display = ("name",)
     search_fields = ("name",)
+
+
+class FicAdmin(admin.ModelAdmin):
+    list_display = (
+        "title",
+        "show_fandoms",
+        "show_ships",
+        "show_authors",
+        "word_count",
+        "complete",
+    )
+    list_filter = ("fandoms", "ships", "complete")
+    search_fields = ("title", "summary", "fandoms__name", "ships__name")
+
+    def show_fandoms(self, obj):
+        if obj.fandoms.exists():
+            return ", ".join([fandom.name for fandom in obj.fandoms.all()])
+        return ""
+
+    def show_ships(self, obj):
+        if obj.ships.exists():
+            return ", ".join([ship.name for ship in obj.ships.all()])
+        return ""
+
+    def show_authors(self, obj):
+        if obj.authors.exists():
+            return ", ".join([author.username for author in obj.authors.all()])
+        return ""
 
 
 class ShipAdmin(admin.ModelAdmin):
@@ -44,6 +72,7 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ("name",)
 
 
+admin.site.register(Fic, FicAdmin)
 admin.site.register(Author, AuthorAdmin)
 admin.site.register(Character, CharacterAdmin)
 admin.site.register(Fandom, FandomAdmin)
