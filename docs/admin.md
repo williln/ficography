@@ -12,6 +12,10 @@ You can view, add, edit, and remove characters via the Admin interface.
 
 You can view, add, edit, and remove fandoms via the Admin interface. 
 
+## Fics 
+
+You can view, add, edit, and remove fics via the Admin interface. 
+
 ## Ships 
 
 You can view, add, edit, and remove ships via the Admin interface. 
