@@ -44,3 +44,6 @@ shell:
 
 test:
     docker-compose run --rm web pytest
+
+tailwind:
+	tailwindcss -i ./static/src/main.css -o ./static/src/output.css --minify

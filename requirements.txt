@@ -1,9 +1,11 @@
 Django<=4.1
 django-db-geventpool
 django-click
+django-compressor==3.1
 django-taggit
 django-extensions
 django-filter==22.1
+django-htmx==1.13.0
 django-cors-headers
 dj-rest-auth
 django-taggit==3.0
@@ -12,6 +14,7 @@ environs[django]
 gevent
 gunicorn
 psycopg2
+pytailwindcss==0.1.4
 
 # Testing
 black

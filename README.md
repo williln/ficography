@@ -59,4 +59,11 @@ Provides a bash prompt insided the `web` container. Useful for debugging and man
 ## just test
 Runs `pytest` and `interrogate` in the `web` container.  Please: write, run, and document your tests.
 
+## just tailwind 
+
+Runs the command to generate new output CSS files for Tailwind.
+
+```
+tailwindcss -i ./static/src/main.css -o ./static/src/output.css --minify
+```
 

@@ -131,4 +131,5 @@ dmypy.json
 # Misc
 .DS_Store
 deployed_static/
-static/
+static/admin/
+static/CACHE/
