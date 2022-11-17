@@ -179,4 +179,4 @@ TAGGIT_CASE_INSENSITIVE = True
 # Compressor settings
 COMPRESS_ROOT = os.path.join(BASE_DIR, "static")
 COMPRESS_ENABLED = True
-STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = ("compressor.finders.CompressorFinder",)
