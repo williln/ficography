@@ -137,7 +137,7 @@ def create_fic(data: dict) -> Fic:
             "date_published": date_published,
             "date_updated": date_updated,
             "word_count": random.randint(500, 200000),
-            "complete": fake.boolean()
+            "complete": fake.boolean(),
         },
     )
     click.secho(f"---Created fic: {data['title']}", fg="green")
